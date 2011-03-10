@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.sisu.scanner.scanners;
+package org.sonatype.sisu.resource.scanner.scanners;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -22,8 +22,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.inject.Nullable;
-import org.sonatype.sisu.scanner.Listener;
-import org.sonatype.sisu.scanner.Scanner;
+import org.sonatype.sisu.resource.scanner.Listener;
+import org.sonatype.sisu.resource.scanner.Scanner;
 
 @Named( "parallel" )
 @Singleton

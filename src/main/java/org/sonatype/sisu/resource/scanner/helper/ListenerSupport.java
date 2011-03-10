@@ -9,19 +9,34 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.sisu.scanner;
+package org.sonatype.sisu.resource.scanner.helper;
 
 import java.io.File;
 
-public interface Listener
+import org.sonatype.sisu.resource.scanner.Listener;
+
+public class ListenerSupport
+    implements Listener
 {
-    void onBegin();
 
-    void onEnterDirectory( File directory );
+    public void onBegin()
+    {
+    }
 
-    void onExitDirectory( File directory );
+    public void onEnterDirectory( File directory )
+    {
+    }
 
-    void onFile( File file );
+    public void onExitDirectory( File directory )
+    {
+    }
 
-    void onEnd();
+    public void onFile( File file )
+    {
+    }
+
+    public void onEnd()
+    {
+    }
+
 }

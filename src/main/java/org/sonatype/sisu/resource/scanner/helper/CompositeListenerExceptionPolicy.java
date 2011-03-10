@@ -9,11 +9,11 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.sisu.scanner.helper;
+package org.sonatype.sisu.resource.scanner.helper;
 
 import java.io.File;
 
-import org.sonatype.sisu.scanner.Listener;
+import org.sonatype.sisu.resource.scanner.Listener;
 
 public abstract class CompositeListenerExceptionPolicy
 {

@@ -23,12 +23,12 @@
     </parent>
 
     <groupId>org.sonatype.sisu</groupId>
-    <artifactId>sisu-scanner</artifactId>
+    <artifactId>sisu-resource-scanner</artifactId>
     <version>1.0</version>
 
     <packaging>bundle</packaging>
 
-    <name>Sisu :: Scanner</name>
+    <name>Sisu :: Resource Scanner</name>
 
     <url>http://sisu.sonatype.org/</url>
     <inceptionYear>2010</inceptionYear>
@@ -39,9 +39,9 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@github.com/sonatype/sisu-scanner.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/sonatype/sisu-scanner.git</developerConnection>
-        <url>http://github.com/sonatype/sisu-scanner</url>
+        <connection>scm:git:git@github.com/sonatype/sisu-resource-scanner.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/sonatype/sisu-resource-scanner.git</developerConnection>
+        <url>http://github.com/sonatype/sisu-resource-scanner</url>
     </scm>
 
     <licenses>
