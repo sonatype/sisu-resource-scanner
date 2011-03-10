@@ -3,8 +3,8 @@ package org.sonatype.sisu.scanner.scanners;
 import java.io.File;
 
 import org.junit.Test;
-import org.sonatype.sisu.scanner.Listener;
-import org.sonatype.sisu.scanner.Scanner;
+import org.sonatype.sisu.resource.scanner.Listener;
+import org.sonatype.sisu.resource.scanner.Scanner;
 
 import static org.mockito.Mockito.*;
 

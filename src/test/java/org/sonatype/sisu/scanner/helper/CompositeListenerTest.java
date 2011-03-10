@@ -3,7 +3,9 @@ package org.sonatype.sisu.scanner.helper;
 import java.io.File;
 
 import org.junit.Test;
-import org.sonatype.sisu.scanner.Listener;
+import org.sonatype.sisu.resource.scanner.Listener;
+import org.sonatype.sisu.resource.scanner.helper.CompositeListener;
+import org.sonatype.sisu.resource.scanner.helper.CompositeListenerExceptionPolicy;
 
 import static org.mockito.Mockito.*;
 import org.mockito.Matchers;

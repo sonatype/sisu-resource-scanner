@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.sisu.scanner;
+package org.sonatype.sisu.resource.scanner;
 
 import java.io.File;
 
