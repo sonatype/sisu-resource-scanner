@@ -24,7 +24,7 @@
 
     <groupId>org.sonatype.sisu</groupId>
     <artifactId>sisu-resource-scanner</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <packaging>bundle</packaging>
 
@@ -85,6 +85,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -19,6 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -99,7 +100,8 @@ public class FairnessScanner
         }
     }
 
-    private FairnessScanner( @Named( "${sisu.scanner.fairness.threads}" ) int threads,
+    @Inject
+    public FairnessScanner( @Named( "${sisu.scanner.fairness.threads}" ) int threads,
                              @Named( "${sisu.scanner.fairness.installmentSize}" ) int installmentSize )
     {
         this.installmentSize = installmentSize;
