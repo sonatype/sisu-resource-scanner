@@ -12,10 +12,13 @@
 package org.sonatype.sisu.resource.scanner;
 
 import java.io.File;
+import java.io.FileFilter;
 
 public interface Scanner
 {
 
     void scan( File directory, Listener listener );
-    
+
+    void scan( File directory, Listener listener, FileFilter filter );
+
 }
