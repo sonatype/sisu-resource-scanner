@@ -146,7 +146,7 @@ public class ParallelScanner
 
         public boolean shouldScanInParallel( File directory )
         {
-            return true;
+            return false;
         }
 
     };
