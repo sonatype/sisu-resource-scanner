@@ -12,6 +12,7 @@
 package org.sonatype.sisu.resource.scanner.scanners;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -46,9 +47,12 @@ public class FairnessScanner
 
         private int index;
 
-        public DirInfo( File dir )
+        private final FileFilter filter;
+
+        public DirInfo( File directory, FileFilter filter )
         {
-            this.listing = dir.listFiles();
+            this.filter = filter;
+            this.listing = filter == null ? directory.listFiles() : directory.listFiles( filter );
             this.index = 0;
         }
 
@@ -65,6 +69,11 @@ public class FairnessScanner
         public File[] getListing()
         {
             return listing;
+        }
+
+        public FileFilter getFilter()
+        {
+            return filter;
         }
     }
 
@@ -113,12 +122,17 @@ public class FairnessScanner
         }
     }
 
-    public void scan( final File directory, Listener listener )
+    public void scan( File directory, Listener listener )
+    {
+        scan( directory, listener, null );
+    }
+
+    public void scan( File directory, Listener listener, FileFilter filter )
     {
         try
         {
             sem.acquire();
-            queue.add( new DirInfo( directory ) );
+            queue.add( new DirInfo( directory, filter ) );
             for ( ThreadWithList t : threads )
             {
                 t.start();
@@ -172,7 +186,7 @@ public class FairnessScanner
             thread.files.add( listing[i] );
             if ( listing[i].isDirectory() )
             {
-                DirInfo subdirInfo = new DirInfo( listing[i] );
+                DirInfo subdirInfo = new DirInfo( listing[i], dirInfo.getFilter() );
                 try
                 {
                     queue.put( subdirInfo );

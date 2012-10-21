@@ -1,6 +1,7 @@
 package org.sonatype.sisu.scanner.scanners;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import org.junit.Test;
 import org.sonatype.sisu.resource.scanner.Listener;
@@ -37,6 +38,41 @@ public abstract class AbstractScannerTest
         verify( listener ).onFile( new File( dir, "dir1/file12" ) );
         verify( listener ).onEnterDirectory( new File( dir, "dir2" ) );
         verify( listener ).onExitDirectory( new File( dir, "dir2" ) );
+        verify( listener ).onFile( new File( dir, "dir2/file21" ) );
+        verify( listener ).onEnd();
+    }
+
+    /**
+     * Scan a directory, filter out some directory and checks that listener is called.
+     */
+    @Test
+    public void filtering()
+        throws Exception
+    {
+        Listener listener = mock( Listener.class );
+
+        File dir = new File( "src/test/data" );
+
+        Scanner scanner = createScanner();
+        scanner.scan( dir, listener, new FileFilter()
+        {
+            public boolean accept( File file )
+            {
+                return !"dir2".equals( file.getName() );
+            }
+        } );
+
+        verify( listener ).onBegin();
+        verify( listener ).onEnterDirectory( dir );
+        verify( listener ).onFile( new File( dir, "file1" ) );
+        verify( listener ).onExitDirectory( dir );
+        verify( listener ).onEnterDirectory( new File( dir, "dir1" ) );
+        verify( listener ).onExitDirectory( new File( dir, "dir1" ) );
+        verify( listener ).onFile( new File( dir, "dir1/file11" ) );
+        verify( listener ).onFile( new File( dir, "dir1/file12" ) );
+        verify( listener, never() ).onEnterDirectory( new File( dir, "dir2" ) );
+        verify( listener, never() ).onExitDirectory( new File( dir, "dir2" ) );
+        verify( listener, never() ).onFile( new File( dir, "dir2/file21" ) );
         verify( listener ).onEnd();
     }
 

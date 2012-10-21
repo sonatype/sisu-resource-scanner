@@ -12,6 +12,7 @@
 package org.sonatype.sisu.resource.scanner.scanners;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,30 +28,35 @@ public class SerialScanner
 
     public void scan( File directory, Listener listener )
     {
+        scan( directory, listener, null );
+    }
+
+    public void scan( File directory, Listener listener, FileFilter filter )
+    {
         if ( listener == null )
         {
             return;
         }
         listener.onBegin();
-        recurse( directory, listener );
+        recurse( directory, listener, filter );
         listener.onEnd();
     }
 
-    private void recurse( File dir, Listener listener )
+    private void recurse( File directory, Listener listener, FileFilter filter )
     {
-        if ( !dir.exists() )
+        if ( !directory.exists() )
         {
             return;
         }
-        listener.onEnterDirectory( dir );
-        File[] files = dir.listFiles();
+        listener.onEnterDirectory( directory );
+        File[] files = filter == null ? directory.listFiles() : directory.listFiles( filter );
         if ( files != null )
         {
             for ( final File file : files )
             {
                 if ( file.isDirectory() )
                 {
-                    recurse( file, listener );
+                    recurse( file, listener, filter );
                 }
                 else
                 {
@@ -58,7 +64,7 @@ public class SerialScanner
                 }
             }
         }
-        listener.onExitDirectory( dir );
+        listener.onExitDirectory( directory );
     }
 
 }

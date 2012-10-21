@@ -12,6 +12,7 @@
 package org.sonatype.sisu.resource.scanner.scanners;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -52,7 +53,11 @@ public class ParallelScanner
     }
 
     public void scan( File directory, Listener listener )
-    // throws InterruptedException, ExecutionException
+    {
+        scan( directory, listener, null );
+    }
+
+    public void scan( File directory, Listener listener, FileFilter filter )
     {
         if ( listener == null )
         {
@@ -64,7 +69,7 @@ public class ParallelScanner
             if ( directory.exists() )
             {
                 sem.acquire();
-                recurse( directory, listener );
+                recurse( directory, listener, filter );
                 sem.acquire();
             }
             listener.onEnd();
@@ -76,10 +81,10 @@ public class ParallelScanner
         }
     }
 
-    private void recurse( File directory, final Listener listener )
+    private void recurse( File directory, final Listener listener, final FileFilter filter )
     {
         listener.onEnterDirectory( directory );
-        File[] files = directory.listFiles();
+        File[] files = filter == null ? directory.listFiles() : directory.listFiles( filter );
         if ( files != null )
         {
             for ( final File file : files )
@@ -93,13 +98,13 @@ public class ParallelScanner
                         {
                             public void run()
                             {
-                                ParallelScanner.this.recurse( file, listener );
+                                ParallelScanner.this.recurse( file, listener, filter );
                             }
                         } );
                     }
                     else
                     {
-                        recurse( file, listener );
+                        recurse( file, listener, filter );
                     }
                 }
                 else
@@ -141,7 +146,7 @@ public class ParallelScanner
 
         public boolean shouldScanInParallel( File directory )
         {
-            return true;
+            return false;
         }
 
     };
