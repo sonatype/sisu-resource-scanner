@@ -1,8 +1,7 @@
 package org.sonatype.sisu.scanner.scanners;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.sonatype.sisu.resource.scanner.Scanner;
@@ -20,13 +19,13 @@ public class ParallelScannerTest
     @Test
     public void parallelisationStrategyNever()
     {
-        assertEquals( false, ParallelScanner.NEVER.shouldScanInParallel( new File( "" ) ) );
+        assertThat( ParallelScanner.NEVER.shouldScanInParallel( util.getBaseDir() ), is( false ) );
     }
 
     @Test
     public void parallelisationStrategyEveryDirectory()
     {
-        assertEquals( true, ParallelScanner.EVERY_DIRECTORY.shouldScanInParallel( new File( "" ) ) );
+        assertThat( ParallelScanner.EVERY_DIRECTORY.shouldScanInParallel( util.getBaseDir() ), is( true ) );
     }
 
 }

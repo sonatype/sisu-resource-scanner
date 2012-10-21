@@ -25,7 +25,7 @@ public abstract class AbstractScannerTest
     {
         Listener listener = mock( Listener.class );
 
-        File dir = new File( "src/test/data" );
+        File dir = util.resolveFile( "src/test/data" );
 
         Scanner scanner = createScanner();
         scanner.scan( dir, listener );
@@ -53,7 +53,7 @@ public abstract class AbstractScannerTest
     {
         Listener listener = mock( Listener.class );
 
-        File dir = new File( "src/test/data" );
+        File dir = util.resolveFile( "src/test/data" );
 
         Scanner scanner = createScanner();
         scanner.scan( dir, listener, new FileFilter()
@@ -87,7 +87,7 @@ public abstract class AbstractScannerTest
     {
         Listener listener = mock( Listener.class );
 
-        File dir = new File( "src/test/fake" );
+        File dir = util.resolveFile( "src/test/fake" );
 
         Scanner scanner = createScanner();
         scanner.scan( dir, listener );

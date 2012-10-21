@@ -42,8 +42,8 @@ public class CompositeListenerTest
 
         CompositeListener compositeListener = new CompositeListener( listener1, listener2 );
 
-        File dir = new File( "target" );
-        File file = new File( "target/file" );
+        File dir = util.getTargetDir();
+        File file = new File( dir, "file" );
 
         compositeListener.onBegin();
         compositeListener.onEnterDirectory( dir );
@@ -76,8 +76,8 @@ public class CompositeListenerTest
 
         CompositeListener compositeListener = new CompositeListener( policy, listener );
 
-        File dir = new File( "target" );
-        File file = new File( "target/file" );
+        File dir = util.getTargetDir();
+        File file = new File( dir, "file" );
 
         RuntimeException e = new RuntimeException( "test" );
         doThrow( e ).when( listener ).onBegin();
@@ -112,8 +112,8 @@ public class CompositeListenerTest
 
         CompositeListener compositeListener = new CompositeListener( policy, listener1, listener2 );
 
-        File dir = new File( "target" );
-        File file = new File( "target/file" );
+        File dir = util.getTargetDir();
+        File file = new File( dir, "file" );
 
         RuntimeException e = new RuntimeException( "test" );
         doThrow( e ).when( listener1 ).onBegin();
@@ -148,8 +148,8 @@ public class CompositeListenerTest
 
         CompositeListener compositeListener = new CompositeListener( policy, listener1, listener2 );
 
-        File dir = new File( "target" );
-        File file = new File( "target/file" );
+        File dir = util.getTargetDir();
+        File file = new File( dir, "file" );
 
         RuntimeException e = new RuntimeException( "test" );
         doThrow( e ).when( listener1 ).onBegin();
