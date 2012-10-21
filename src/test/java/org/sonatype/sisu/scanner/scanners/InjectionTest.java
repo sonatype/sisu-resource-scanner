@@ -9,11 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.junit.Test;
-import org.sonatype.guice.bean.containers.InjectedTestCase;
+import org.sonatype.sisu.litmus.testsupport.inject.InjectedTestSupport;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
 public class InjectionTest
-    extends InjectedTestCase
+    extends InjectedTestSupport
 {
 
     @Inject

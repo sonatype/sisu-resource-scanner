@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 import org.junit.Test;
+import org.sonatype.sisu.litmus.testsupport.TestSupport;
 import org.sonatype.sisu.resource.scanner.Listener;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.Matchers;
 
 public abstract class AbstractScannerTest
+    extends TestSupport
 {
 
     /**
