@@ -18,11 +18,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.inject.Nullable;
 import org.sonatype.sisu.resource.scanner.Listener;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
