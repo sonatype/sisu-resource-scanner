@@ -19,24 +19,19 @@ public class ListenerSupport
     implements Listener
 {
 
-    public void onBegin()
-    {
-    }
+  public void onBegin() {
+  }
 
-    public void onEnterDirectory( File directory )
-    {
-    }
+  public void onEnterDirectory(File directory) {
+  }
 
-    public void onExitDirectory( File directory )
-    {
-    }
+  public void onExitDirectory(File directory) {
+  }
 
-    public void onFile( File file )
-    {
-    }
+  public void onFile(File file) {
+  }
 
-    public void onEnd()
-    {
-    }
+  public void onEnd() {
+  }
 
 }

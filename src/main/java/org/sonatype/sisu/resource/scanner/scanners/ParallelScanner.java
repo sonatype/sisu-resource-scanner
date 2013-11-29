@@ -26,129 +26,110 @@ import org.sonatype.inject.Nullable;
 import org.sonatype.sisu.resource.scanner.Listener;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
-@Named( "parallel" )
+@Named("parallel")
 @Singleton
 public class ParallelScanner
     implements Scanner
 {
-    private final ExecutorService executor;
+  private final ExecutorService executor;
 
-    private final Semaphore sem = new Semaphore( 1 );
+  private final Semaphore sem = new Semaphore(1);
 
-    private final AtomicInteger count = new AtomicInteger();
+  private final AtomicInteger count = new AtomicInteger();
 
-    private final ParallelisationStrategy parallelisationStrategy;
+  private final ParallelisationStrategy parallelisationStrategy;
 
-    public ParallelScanner( @Named( "${scanner.parallel.threads}" ) int threads )
-    {
-        this( threads, EVERY_DIRECTORY );
+  public ParallelScanner(@Named("${scanner.parallel.threads}") int threads) {
+    this(threads, EVERY_DIRECTORY);
+  }
+
+  @Inject
+  public ParallelScanner(@Named("${scanner.parallel.threads}") int threads,
+      @Nullable ParallelisationStrategy parallelisationStrategy)
+  {
+    this.parallelisationStrategy = parallelisationStrategy == null ? EVERY_DIRECTORY : parallelisationStrategy;
+    this.executor = Executors.newFixedThreadPool(threads);
+  }
+
+  public void scan(File directory, Listener listener) {
+    scan(directory, listener, null);
+  }
+
+  public void scan(File directory, Listener listener, FileFilter filter) {
+    if (listener == null) {
+      return;
     }
-
-    @Inject
-    public ParallelScanner( @Named( "${scanner.parallel.threads}" ) int threads,
-                            @Nullable ParallelisationStrategy parallelisationStrategy )
-    {
-        this.parallelisationStrategy = parallelisationStrategy == null ? EVERY_DIRECTORY : parallelisationStrategy;
-        this.executor = Executors.newFixedThreadPool( threads );
+    try {
+      listener.onBegin();
+      if (directory.exists()) {
+        sem.acquire();
+        recurse(directory, listener, filter);
+        sem.acquire();
+      }
+      listener.onEnd();
+      executor.shutdown();
     }
-
-    public void scan( File directory, Listener listener )
-    {
-        scan( directory, listener, null );
+    catch (InterruptedException e) {
+      e.printStackTrace();
     }
+  }
 
-    public void scan( File directory, Listener listener, FileFilter filter )
-    {
-        if ( listener == null )
-        {
-            return;
-        }
-        try
-        {
-            listener.onBegin();
-            if ( directory.exists() )
+  private void recurse(File directory, final Listener listener, final FileFilter filter) {
+    listener.onEnterDirectory(directory);
+    File[] files = filter == null ? directory.listFiles() : directory.listFiles(filter);
+    if (files != null) {
+      for (final File file : files) {
+        if (file.isDirectory()) {
+          if (parallelisationStrategy.shouldScanInParallel(file)) {
+            count.incrementAndGet();
+            executor.submit(new Runnable()
             {
-                sem.acquire();
-                recurse( directory, listener, filter );
-                sem.acquire();
-            }
-            listener.onEnd();
-            executor.shutdown();
+              public void run() {
+                ParallelScanner.this.recurse(file, listener, filter);
+              }
+            });
+          }
+          else {
+            recurse(file, listener, filter);
+          }
         }
-        catch ( InterruptedException e )
-        {
-            e.printStackTrace();
+        else {
+          listener.onFile(file);
         }
+      }
+    }
+    listener.onExitDirectory(directory);
+
+    if (count.decrementAndGet() < 0) {
+      sem.release();
+    }
+  }
+
+  public void close() {
+    executor.shutdown();
+  }
+
+  public static interface ParallelisationStrategy
+  {
+    boolean shouldScanInParallel(File directory);
+  }
+
+  public static ParallelisationStrategy EVERY_DIRECTORY = new ParallelisationStrategy()
+  {
+
+    public boolean shouldScanInParallel(File directory) {
+      return true;
     }
 
-    private void recurse( File directory, final Listener listener, final FileFilter filter )
-    {
-        listener.onEnterDirectory( directory );
-        File[] files = filter == null ? directory.listFiles() : directory.listFiles( filter );
-        if ( files != null )
-        {
-            for ( final File file : files )
-            {
-                if ( file.isDirectory() )
-                {
-                    if ( parallelisationStrategy.shouldScanInParallel( file ) )
-                    {
-                        count.incrementAndGet();
-                        executor.submit( new Runnable()
-                        {
-                            public void run()
-                            {
-                                ParallelScanner.this.recurse( file, listener, filter );
-                            }
-                        } );
-                    }
-                    else
-                    {
-                        recurse( file, listener, filter );
-                    }
-                }
-                else
-                {
-                    listener.onFile( file );
-                }
-            }
-        }
-        listener.onExitDirectory( directory );
+  };
 
-        if ( count.decrementAndGet() < 0 )
-        {
-            sem.release();
-        }
+  public static ParallelisationStrategy NEVER = new ParallelisationStrategy()
+  {
+
+    public boolean shouldScanInParallel(File directory) {
+      return false;
     }
 
-    public void close()
-    {
-        executor.shutdown();
-    }
-
-    public static interface ParallelisationStrategy
-    {
-        boolean shouldScanInParallel( File directory );
-    }
-
-    public static ParallelisationStrategy EVERY_DIRECTORY = new ParallelisationStrategy()
-    {
-
-        public boolean shouldScanInParallel( File directory )
-        {
-            return true;
-        }
-
-    };
-
-    public static ParallelisationStrategy NEVER = new ParallelisationStrategy()
-    {
-
-        public boolean shouldScanInParallel( File directory )
-        {
-            return false;
-        }
-
-    };
+  };
 
 }

@@ -7,9 +7,8 @@ public class SerialScannerTest
     extends AbstractScannerTest
 {
 
-    protected Scanner createScanner()
-    {
-        return new SerialScanner();
-    }
+  protected Scanner createScanner() {
+    return new SerialScanner();
+  }
 
 }

@@ -17,8 +17,8 @@ import java.io.FileFilter;
 public interface Scanner
 {
 
-    void scan( File directory, Listener listener );
+  void scan(File directory, Listener listener);
 
-    void scan( File directory, Listener listener, FileFilter filter );
+  void scan(File directory, Listener listener, FileFilter filter);
 
 }

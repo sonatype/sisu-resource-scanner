@@ -22,115 +22,90 @@ public class CompositeListener
     extends ListenerSupport
 {
 
-    private final Collection<Listener> listeners;
+  private final Collection<Listener> listeners;
 
-    private final CompositeListenerExceptionPolicy exceptionPolicy;
+  private final CompositeListenerExceptionPolicy exceptionPolicy;
 
-    public CompositeListener( Listener... listeners )
-    {
-        this( CompositeListenerExceptionPolicy.ignore(), listeners );
+  public CompositeListener(Listener... listeners) {
+    this(CompositeListenerExceptionPolicy.ignore(), listeners);
+  }
+
+  public CompositeListener(CompositeListenerExceptionPolicy exceptionPolicy, Listener... listeners) {
+    this.exceptionPolicy = exceptionPolicy;
+    this.listeners = new ArrayList<Listener>();
+    if (listeners != null) {
+      this.listeners.addAll(Arrays.asList(listeners));
     }
+  }
 
-    public CompositeListener( CompositeListenerExceptionPolicy exceptionPolicy, Listener... listeners )
-    {
-        this.exceptionPolicy = exceptionPolicy;
-        this.listeners = new ArrayList<Listener>();
-        if ( listeners != null )
-        {
-            this.listeners.addAll( Arrays.asList( listeners ) );
-        }
-    }
+  public CompositeListener add(Listener listener) {
+    listeners.add(listener);
+    return this;
+  }
 
-    public CompositeListener add( Listener listener )
-    {
-        listeners.add( listener );
-        return this;
-    }
+  public CompositeListener remove(Listener listener) {
+    listeners.remove(listener);
+    return this;
+  }
 
-    public CompositeListener remove( Listener listener )
-    {
-        listeners.remove( listener );
-        return this;
+  @Override
+  public void onBegin() {
+    for (Listener listener : listeners) {
+      try {
+        listener.onBegin();
+      }
+      catch (Exception e) {
+        exceptionPolicy.onBegin(listener, e);
+      }
     }
+  }
 
-    @Override
-    public void onBegin()
-    {
-        for ( Listener listener : listeners )
-        {
-            try
-            {
-                listener.onBegin();
-            }
-            catch ( Exception e )
-            {
-                exceptionPolicy.onBegin( listener, e );
-            }
-        }
+  @Override
+  public void onEnterDirectory(File directory) {
+    for (Listener listener : listeners) {
+      try {
+        listener.onEnterDirectory(directory);
+      }
+      catch (Exception e) {
+        exceptionPolicy.onEnterDirectory(listener, e, directory);
+      }
     }
+  }
 
-    @Override
-    public void onEnterDirectory( File directory )
-    {
-        for ( Listener listener : listeners )
-        {
-            try
-            {
-                listener.onEnterDirectory( directory );
-            }
-            catch ( Exception e )
-            {
-                exceptionPolicy.onEnterDirectory( listener, e, directory );
-            }
-        }
+  @Override
+  public void onExitDirectory(File directory) {
+    for (Listener listener : listeners) {
+      try {
+        listener.onExitDirectory(directory);
+      }
+      catch (Exception e) {
+        exceptionPolicy.onExitDirectory(listener, e, directory);
+      }
     }
+  }
 
-    @Override
-    public void onExitDirectory( File directory )
-    {
-        for ( Listener listener : listeners )
-        {
-            try
-            {
-                listener.onExitDirectory( directory );
-            }
-            catch ( Exception e )
-            {
-                exceptionPolicy.onExitDirectory( listener, e, directory );
-            }
-        }
+  @Override
+  public void onFile(File file) {
+    for (Listener listener : listeners) {
+      try {
+        listener.onFile(file);
+      }
+      catch (Exception e) {
+        exceptionPolicy.onFile(listener, e, file);
+      }
     }
+  }
 
-    @Override
-    public void onFile( File file )
-    {
-        for ( Listener listener : listeners )
-        {
-            try
-            {
-                listener.onFile( file );
-            }
-            catch ( Exception e )
-            {
-                exceptionPolicy.onFile( listener, e, file );
-            }
-        }
+  @Override
+  public void onEnd() {
+    for (Listener listener : listeners) {
+      try {
+        listener.onEnd();
+      }
+      catch (Exception e) {
+        exceptionPolicy.onEnd(listener, e);
+      }
     }
-
-    @Override
-    public void onEnd()
-    {
-        for ( Listener listener : listeners )
-        {
-            try
-            {
-                listener.onEnd();
-            }
-            catch ( Exception e )
-            {
-                exceptionPolicy.onEnd( listener, e );
-            }
-        }
-    }
+  }
 
 }

@@ -15,13 +15,13 @@ import java.io.File;
 
 public interface Listener
 {
-    void onBegin();
+  void onBegin();
 
-    void onEnterDirectory( File directory );
+  void onEnterDirectory(File directory);
 
-    void onExitDirectory( File directory );
+  void onExitDirectory(File directory);
 
-    void onFile( File file );
+  void onFile(File file);
 
-    void onEnd();
+  void onEnd();
 }

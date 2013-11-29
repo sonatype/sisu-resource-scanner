@@ -3,102 +3,97 @@ package org.sonatype.sisu.scanner.scanners;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.junit.Test;
 import org.sonatype.sisu.litmus.testsupport.TestSupport;
 import org.sonatype.sisu.resource.scanner.Listener;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
-import static org.mockito.Mockito.*;
-
+import org.junit.Test;
 import org.mockito.Matchers;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public abstract class AbstractScannerTest
     extends TestSupport
 {
 
-    /**
-     * Scan a directory and checks that listener is called.
-     */
-    @Test
-    public void filesAreScanned()
-        throws Exception
+  /**
+   * Scan a directory and checks that listener is called.
+   */
+  @Test
+  public void filesAreScanned() throws Exception {
+    Listener listener = mock(Listener.class);
+
+    File dir = util.resolveFile("src/test/data");
+
+    Scanner scanner = createScanner();
+    scanner.scan(dir, listener);
+
+    verify(listener).onBegin();
+    verify(listener).onEnterDirectory(dir);
+    verify(listener).onFile(new File(dir, "file1"));
+    verify(listener).onExitDirectory(dir);
+    verify(listener).onEnterDirectory(new File(dir, "dir1"));
+    verify(listener).onExitDirectory(new File(dir, "dir1"));
+    verify(listener).onFile(new File(dir, "dir1/file11"));
+    verify(listener).onFile(new File(dir, "dir1/file12"));
+    verify(listener).onEnterDirectory(new File(dir, "dir2"));
+    verify(listener).onExitDirectory(new File(dir, "dir2"));
+    verify(listener).onFile(new File(dir, "dir2/file21"));
+    verify(listener).onEnd();
+  }
+
+  /**
+   * Scan a directory, filter out some directory and checks that listener is called.
+   */
+  @Test
+  public void filtering() throws Exception {
+    Listener listener = mock(Listener.class);
+
+    File dir = util.resolveFile("src/test/data");
+
+    Scanner scanner = createScanner();
+    scanner.scan(dir, listener, new FileFilter()
     {
-        Listener listener = mock( Listener.class );
+      public boolean accept(File file) {
+        return !"dir2".equals(file.getName());
+      }
+    });
 
-        File dir = util.resolveFile( "src/test/data" );
+    verify(listener).onBegin();
+    verify(listener).onEnterDirectory(dir);
+    verify(listener).onFile(new File(dir, "file1"));
+    verify(listener).onExitDirectory(dir);
+    verify(listener).onEnterDirectory(new File(dir, "dir1"));
+    verify(listener).onExitDirectory(new File(dir, "dir1"));
+    verify(listener).onFile(new File(dir, "dir1/file11"));
+    verify(listener).onFile(new File(dir, "dir1/file12"));
+    verify(listener, never()).onEnterDirectory(new File(dir, "dir2"));
+    verify(listener, never()).onExitDirectory(new File(dir, "dir2"));
+    verify(listener, never()).onFile(new File(dir, "dir2/file21"));
+    verify(listener).onEnd();
+  }
 
-        Scanner scanner = createScanner();
-        scanner.scan( dir, listener );
+  /**
+   * Checks that onEnter/onExit directory are not called for an inexistent file.
+   */
+  @Test
+  public void onEnterAndOnExitAreNotCalledForInexistingDir() throws Exception {
+    Listener listener = mock(Listener.class);
 
-        verify( listener ).onBegin();
-        verify( listener ).onEnterDirectory( dir );
-        verify( listener ).onFile( new File( dir, "file1" ) );
-        verify( listener ).onExitDirectory( dir );
-        verify( listener ).onEnterDirectory( new File( dir, "dir1" ) );
-        verify( listener ).onExitDirectory( new File( dir, "dir1" ) );
-        verify( listener ).onFile( new File( dir, "dir1/file11" ) );
-        verify( listener ).onFile( new File( dir, "dir1/file12" ) );
-        verify( listener ).onEnterDirectory( new File( dir, "dir2" ) );
-        verify( listener ).onExitDirectory( new File( dir, "dir2" ) );
-        verify( listener ).onFile( new File( dir, "dir2/file21" ) );
-        verify( listener ).onEnd();
-    }
+    File dir = util.resolveFile("src/test/fake");
 
-    /**
-     * Scan a directory, filter out some directory and checks that listener is called.
-     */
-    @Test
-    public void filtering()
-        throws Exception
-    {
-        Listener listener = mock( Listener.class );
+    Scanner scanner = createScanner();
+    scanner.scan(dir, listener);
 
-        File dir = util.resolveFile( "src/test/data" );
+    verify(listener).onBegin();
+    verify(listener, never()).onEnterDirectory(Matchers.any(File.class));
+    verify(listener, never()).onFile(Matchers.any(File.class));
+    verify(listener, never()).onExitDirectory(Matchers.any(File.class));
+    verify(listener).onEnd();
+  }
 
-        Scanner scanner = createScanner();
-        scanner.scan( dir, listener, new FileFilter()
-        {
-            public boolean accept( File file )
-            {
-                return !"dir2".equals( file.getName() );
-            }
-        } );
-
-        verify( listener ).onBegin();
-        verify( listener ).onEnterDirectory( dir );
-        verify( listener ).onFile( new File( dir, "file1" ) );
-        verify( listener ).onExitDirectory( dir );
-        verify( listener ).onEnterDirectory( new File( dir, "dir1" ) );
-        verify( listener ).onExitDirectory( new File( dir, "dir1" ) );
-        verify( listener ).onFile( new File( dir, "dir1/file11" ) );
-        verify( listener ).onFile( new File( dir, "dir1/file12" ) );
-        verify( listener, never() ).onEnterDirectory( new File( dir, "dir2" ) );
-        verify( listener, never() ).onExitDirectory( new File( dir, "dir2" ) );
-        verify( listener, never() ).onFile( new File( dir, "dir2/file21" ) );
-        verify( listener ).onEnd();
-    }
-
-    /**
-     * Checks that onEnter/onExit directory are not called for an inexistent file.
-     */
-    @Test
-    public void onEnterAndOnExitAreNotCalledForInexistingDir()
-        throws Exception
-    {
-        Listener listener = mock( Listener.class );
-
-        File dir = util.resolveFile( "src/test/fake" );
-
-        Scanner scanner = createScanner();
-        scanner.scan( dir, listener );
-
-        verify( listener ).onBegin();
-        verify( listener, never() ).onEnterDirectory( Matchers.any( File.class ) );
-        verify( listener, never() ).onFile( Matchers.any( File.class ) );
-        verify( listener, never() ).onExitDirectory( Matchers.any( File.class ) );
-        verify( listener ).onEnd();
-    }
-
-    protected abstract Scanner createScanner();
+  protected abstract Scanner createScanner();
 
 }

@@ -20,51 +20,42 @@ import javax.inject.Singleton;
 import org.sonatype.sisu.resource.scanner.Listener;
 import org.sonatype.sisu.resource.scanner.Scanner;
 
-@Named( "serial" )
+@Named("serial")
 @Singleton
 public class SerialScanner
     implements Scanner
 {
 
-    public void scan( File directory, Listener listener )
-    {
-        scan( directory, listener, null );
-    }
+  public void scan(File directory, Listener listener) {
+    scan(directory, listener, null);
+  }
 
-    public void scan( File directory, Listener listener, FileFilter filter )
-    {
-        if ( listener == null )
-        {
-            return;
-        }
-        listener.onBegin();
-        recurse( directory, listener, filter );
-        listener.onEnd();
+  public void scan(File directory, Listener listener, FileFilter filter) {
+    if (listener == null) {
+      return;
     }
+    listener.onBegin();
+    recurse(directory, listener, filter);
+    listener.onEnd();
+  }
 
-    private void recurse( File directory, Listener listener, FileFilter filter )
-    {
-        if ( !directory.exists() )
-        {
-            return;
-        }
-        listener.onEnterDirectory( directory );
-        File[] files = filter == null ? directory.listFiles() : directory.listFiles( filter );
-        if ( files != null )
-        {
-            for ( final File file : files )
-            {
-                if ( file.isDirectory() )
-                {
-                    recurse( file, listener, filter );
-                }
-                else
-                {
-                    listener.onFile( file );
-                }
-            }
-        }
-        listener.onExitDirectory( directory );
+  private void recurse(File directory, Listener listener, FileFilter filter) {
+    if (!directory.exists()) {
+      return;
     }
+    listener.onEnterDirectory(directory);
+    File[] files = filter == null ? directory.listFiles() : directory.listFiles(filter);
+    if (files != null) {
+      for (final File file : files) {
+        if (file.isDirectory()) {
+          recurse(file, listener, filter);
+        }
+        else {
+          listener.onFile(file);
+        }
+      }
+    }
+    listener.onExitDirectory(directory);
+  }
 
 }
